@@ -1,0 +1,40 @@
+# size 0
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"pagination":{"page":1,"size":0}}'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Transfer-Encoding: chunked
+
+{"page":1,"size":10,"count":12,"rows":[{"meter_id":"M-101","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":728.79,"baseline_kwh":729.61,"variation_pct":-0.11,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-102","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":1012.85,"baseline_kwh":1005.61,"variation_pct":0.72,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-103","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":602.39,"baseline_kwh":594.99,"variation_pct":1.24,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-104","status":"ALERT","severity":"MEDIUM","anomaly_type":"EXPLAINABLE_ANOMALY","priority":3,"consumption_kwh":1725.63,"baseline_kwh":1171.71,"variation_pct":47.27,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-105","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":861.31,"baseline_kwh":871.18,"variation_pct":-1.13,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-106","status":"ALERT","severity":"LOW","anomaly_type":"FALSE_POSITIVE","priority":4,"consumption_kwh":1362.11,"baseline_kwh":1349.12,"variation_pct":0.96,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-107","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":474.66,"baseline_kwh":479.04,"variation_pct":-0.91,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-108","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":1211.49,"baseline_kwh":1213.32,"variation_pct":-0.15,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-109","status":"CRITICAL","severity":"HIGH","anomaly_type":"REAL_ANOMALY","priority":1,"consumption_kwh":2207.6,"baseline_kwh":1052.15,"variation_pct":109.82,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-110","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":706.16,"baseline_kwh":706.84,"variation_pct":-0.1,"last_reading_at":"2026-09-14T23:00:00Z"}]}
+
+
+# size 1
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"pagination":{"page":1,"size":1}}'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 241
+
+{"page":1,"size":1,"count":12,"rows":[{"meter_id":"M-101","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":728.79,"baseline_kwh":729.61,"variation_pct":-0.11,"last_reading_at":"2026-09-14T23:00:00Z"}]}
+
+
+# size 100
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"pagination":{"page":1,"size":100}}'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Transfer-Encoding: chunked
+
+{"page":1,"size":100,"count":12,"rows":[{"meter_id":"M-101","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":728.79,"baseline_kwh":729.61,"variation_pct":-0.11,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-102","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":1012.85,"baseline_kwh":1005.61,"variation_pct":0.72,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-103","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":602.39,"baseline_kwh":594.99,"variation_pct":1.24,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-104","status":"ALERT","severity":"MEDIUM","anomaly_type":"EXPLAINABLE_ANOMALY","priority":3,"consumption_kwh":1725.63,"baseline_kwh":1171.71,"variation_pct":47.27,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-105","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":861.31,"baseline_kwh":871.18,"variation_pct":-1.13,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-106","status":"ALERT","severity":"LOW","anomaly_type":"FALSE_POSITIVE","priority":4,"consumption_kwh":1362.11,"baseline_kwh":1349.12,"variation_pct":0.96,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-107","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":474.66,"baseline_kwh":479.04,"variation_pct":-0.91,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-108","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":1211.49,"baseline_kwh":1213.32,"variation_pct":-0.15,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-109","status":"CRITICAL","severity":"HIGH","anomaly_type":"REAL_ANOMALY","priority":1,"consumption_kwh":2207.6,"baseline_kwh":1052.15,"variation_pct":109.82,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-110","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":706.16,"baseline_kwh":706.84,"variation_pct":-0.1,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-111","status":"NORMAL","severity":null,"anomaly_type":null,"priority":null,"consumption_kwh":946.72,"baseline_kwh":940.32,"variation_pct":0.68,"last_reading_at":"2026-09-14T23:00:00Z"},{"meter_id":"M-112","status":"CRITICAL","severity":"HIGH","anomaly_type":"DATA_QUALITY","priority":2,"consumption_kwh":662.65,"baseline_kwh":662.84,"variation_pct":-0.03,"last_reading_at":"2026-09-14T23:00:00Z"}]}
+
+
+# size 101
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"pagination":{"page":1,"size":101}}'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 170
+
+{"status_code":400,"message":"Filtros inválidos","errors":["pagination.size debe estar entre 1 y 100"],"timestamp":"2026-10-22T19:16:37Z","path":"/api/v1/meter/getAll"}
+
+

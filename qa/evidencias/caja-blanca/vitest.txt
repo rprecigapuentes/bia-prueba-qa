@@ -1,0 +1,33 @@
+$ pnpm test
+$ vitest run
+
+ RUN  v5.0.5 /src
+
+ ✓ src/lib/format.defects.test.ts (3 tests) 14ms
+ ✓ src/lib/format.test.ts (3 tests) 20ms
+ ✓ src/features/meters/hooks/useMeterFilters.test.ts (4 tests) 7ms
+ ✓ src/components/ui/marks.test.tsx (4 tests) 153ms
+ ✓ src/features/meters/components/Pagination.defects.test.tsx (3 tests) 190ms
+
+ Test Files  5 passed (5)
+      Tests  14 passed | 3 expected fail (17)
+   Start at  21:56:27
+   Duration  2.32s (environment 75%, setup 11%, transform 5%, import 4%, tests 4%)
+
+
+$ pnpm vitest run --coverage.enabled=false src/lib/format.defects.test.ts src/features/meters/components/Pagination.defects.test.tsx --reporter=verbose
+
+ RUN  v5.0.5 /src
+
+ ✓ src/lib/format.defects.test.ts > hora de planta en la zona del operador (America/Bogota) > BUG-02: formatPlantTime no convierte 14:00 de planta a la zona del navegador 6ms
+ ✓ src/lib/format.defects.test.ts > hora de planta en la zona del operador (America/Bogota) > BUG-02: la última lectura 14/09 23:00 no se corre al día ni a la hora anterior 1ms
+ ✓ src/lib/format.defects.test.ts > hora de planta en la zona del operador (America/Bogota) > formatPlantDay ya lee la fecha en UTC y no depende de la zona (control) 0ms
+ ✓ src/features/meters/components/Pagination.defects.test.tsx > paginación del libro con 12 medidores y páginas de 10 > BUG-03: en la página 1 el botón Siguiente está habilitado 134ms
+ ✓ src/features/meters/components/Pagination.defects.test.tsx > paginación del libro con 12 medidores y páginas de 10 > en la página 2 el resumen dice 11–12 de 12 (control) 9ms
+ ✓ src/features/meters/components/Pagination.defects.test.tsx > paginación del libro con 12 medidores y páginas de 10 > con 20 medidores (múltiplo exacto) Siguiente está habilitado en la página 1 (control) 15ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed | 3 expected fail (6)
+   Start at  21:56:30
+   Duration  1.34s (environment 71%, setup 12%, tests 8%, import 7%, transform 2%, worker 1%)
+

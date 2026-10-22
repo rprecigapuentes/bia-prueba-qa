@@ -1,0 +1,40 @@
+# sin header Authorization
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/auth/me'
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 125
+
+{"status_code":401,"message":"Falta el token de autenticación","timestamp":"2026-10-22T19:16:37Z","path":"/api/v1/auth/me"}
+
+
+# token con la firma alterada (últimos 4 caracteres cambiados)
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/auth/me' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 119
+
+{"status_code":401,"message":"Token inválido o expirado","timestamp":"2026-10-22T19:16:37Z","path":"/api/v1/auth/me"}
+
+
+# token sin prefijo 'Bearer '
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/auth/me' -H 'Authorization: eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 125
+
+{"status_code":401,"message":"Falta el token de autenticación","timestamp":"2026-10-22T19:16:37Z","path":"/api/v1/auth/me"}
+
+
+# control: token válido
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/auth/me' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 50
+
+{"email":"admin@energia.local","name":"Operador"}
+
+

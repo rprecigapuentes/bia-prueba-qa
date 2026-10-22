@@ -1,0 +1,10 @@
+# meter_id m-109
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"filter":{"meter_id":"m-109"},"pagination":{"page":1,"size":100}}'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 42
+
+{"page":1,"size":100,"count":0,"rows":[]}
+
+

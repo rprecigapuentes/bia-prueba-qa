@@ -1,0 +1,5 @@
+# sort_by severity ASC y DESC sin filtro (sentido que usa la API)
+$ curl -sS -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"filter":{"sort_by":"severity","sort_order":"ASC"},"pagination":{"page":1,"size":100}}'
+M-101:- M-102:- M-103:- M-105:- M-107:- M-108:- M-110:- M-111:- M-106:LOW M-104:MEDIUM M-109:HIGH M-112:HIGH
+$ curl -sS -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"filter":{"sort_by":"severity","sort_order":"DESC"},"pagination":{"page":1,"size":100}}'
+M-109:HIGH M-112:HIGH M-104:MEDIUM M-106:LOW M-101:- M-102:- M-103:- M-105:- M-107:- M-108:- M-110:- M-111:-
