@@ -14,15 +14,15 @@ Defectos del build `026b991` encontrados por la caja negra ([`03`](03-casos-caja
 
 | ID | Título | Severidad | Prioridad | Encontrado por | Issue |
 |---|---|---|---|---|---|
-| [BUG-01](#bug-01) | Un falso positivo (M-106) aparece en estado Alerta en lugar de Normal | Alta | Alta | TC-09, TC-13, TC-16, TC-17 | <!-- ISSUE-BUG-01 --> |
-| [BUG-02](#bug-02) | Las horas de planta se muestran convertidas a la zona del navegador (5 h antes en Colombia) | Alta | Alta | TC-20 | <!-- ISSUE-BUG-02 --> |
-| [BUG-03](#bug-03) | La paginación del libro no permite pasar a la página 2: M-111 y M-112 quedan inalcanzables | Media | Alta | TC-12 | <!-- ISSUE-BUG-03 --> |
-| [BUG-04](#bug-04) | La búsqueda por medidor distingue mayúsculas: "m-109" no encuentra M-109 | Media | Media | TC-06, TC-16 | <!-- ISSUE-BUG-04 --> |
-| [BUG-05](#bug-05) | `page` negativa en `POST /meter/getAll` responde 500 en lugar de 400 | Media | Baja | TC-11 | <!-- ISSUE-BUG-05 --> |
-| [BUG-06](#bug-06) | `size: 0` en `POST /meter/getAll` se acepta como 10 en lugar de rechazarse | Baja | Baja | TC-10 | <!-- ISSUE-BUG-06 --> |
-| [BUG-08](#bug-08) | Despacho dice "3 órdenes abiertas" mientras numera "Orden 1 de 4" | Baja | Media | TC-18 | <!-- ISSUE-BUG-08 --> |
-| [BUG-09](#bug-09) | Textos en inglés y códigos internos visibles en una interfaz en español | Baja | Baja | TC-25 | <!-- ISSUE-BUG-09 --> |
-| [BUG-10](#bug-10) | La severidad de una anomalía real usa "≥" donde la regla dice "supera" | Media | Baja | Caja blanca | <!-- ISSUE-BUG-10 --> |
+| [BUG-01](#bug-01) | Un falso positivo (M-106) aparece en estado Alerta en lugar de Normal | Alta | Alta | TC-09, TC-13, TC-16, TC-17 | [#13](https://github.com/rprecigapuentes/bia-prueba-qa/issues/13) |
+| [BUG-02](#bug-02) | Las horas de planta se muestran convertidas a la zona del navegador (5 h antes en Colombia) | Alta | Alta | TC-20 | [#14](https://github.com/rprecigapuentes/bia-prueba-qa/issues/14) |
+| [BUG-03](#bug-03) | La paginación del libro no permite pasar a la página 2: M-111 y M-112 quedan inalcanzables | Media | Alta | TC-12 | [#15](https://github.com/rprecigapuentes/bia-prueba-qa/issues/15) |
+| [BUG-04](#bug-04) | La búsqueda por medidor distingue mayúsculas: "m-109" no encuentra M-109 | Media | Media | TC-06, TC-16 | [#16](https://github.com/rprecigapuentes/bia-prueba-qa/issues/16) |
+| [BUG-05](#bug-05) | `page` negativa en `POST /meter/getAll` responde 500 en lugar de 400 | Media | Baja | TC-11 | [#17](https://github.com/rprecigapuentes/bia-prueba-qa/issues/17) |
+| [BUG-06](#bug-06) | `size: 0` en `POST /meter/getAll` se acepta como 10 en lugar de rechazarse | Baja | Baja | TC-10 | [#18](https://github.com/rprecigapuentes/bia-prueba-qa/issues/18) |
+| [BUG-08](#bug-08) | Despacho dice "3 órdenes abiertas" mientras numera "Orden 1 de 4" | Baja | Media | TC-18 | [#19](https://github.com/rprecigapuentes/bia-prueba-qa/issues/19) |
+| [BUG-09](#bug-09) | Textos en inglés y códigos internos visibles en una interfaz en español | Baja | Baja | TC-25 | [#20](https://github.com/rprecigapuentes/bia-prueba-qa/issues/20) |
+| [BUG-10](#bug-10) | La severidad de una anomalía real usa "≥" donde la regla dice "supera" | Media | Baja | Caja blanca | [#21](https://github.com/rprecigapuentes/bia-prueba-qa/issues/21) |
 
 **Retirado:** BUG-07 ("`status` en minúsculas se acepta"). La caja blanca muestra que la conversión a mayúsculas es intencional (`meter/dto.go:49`) y que un test la fija como comportamiento esperado (`meter/service_test.go:61`). Queda como observación de contrato: el Swagger documenta el enum en mayúsculas sin mencionar esa tolerancia.
 
