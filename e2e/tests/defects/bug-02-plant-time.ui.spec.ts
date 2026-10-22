@@ -4,7 +4,7 @@ import { expect, test } from '../../src/fixtures/test';
 // BUG-02: the UI converts plant times to the browser timezone (09:00 instead of 14:00, 18:00 instead of 23:00).
 test.describe('Defecto BUG-02 en la UI', {
   tag: '@defect',
-  annotation: { type: 'issue', description: 'qa/05-defectos.md#bug-02' },
+  annotation: { type: 'issue', description: 'https://github.com/rprecigapuentes/bia-prueba-qa/issues/14' },
 }, () => {
   test('BUG-02 Verifica que la investigación de M-109 muestra la detección a la hora de planta 12/09 14:00', async ({
     investigationPage,

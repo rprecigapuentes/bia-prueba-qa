@@ -3,7 +3,7 @@ import { expect, test } from '../../src/fixtures/test';
 // BUG-03: both pagination buttons are disabled on page 1, so page 2 is reachable only through the URL.
 test.describe('Defecto BUG-03 en la UI', {
   tag: '@defect',
-  annotation: { type: 'issue', description: 'qa/05-defectos.md#bug-03' },
+  annotation: { type: 'issue', description: 'https://github.com/rprecigapuentes/bia-prueba-qa/issues/15' },
 }, () => {
   test('BUG-03 Verifica que Siguiente avanza a la página 2 del libro con M-111 y M-112', async ({ ledgerPage }) => {
     test.fail();

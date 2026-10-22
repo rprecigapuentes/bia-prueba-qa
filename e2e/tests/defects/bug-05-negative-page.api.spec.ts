@@ -4,7 +4,7 @@ import { expect, test } from '../../src/fixtures/test';
 // BUG-05: pagination.page -1 answers 500 instead of a 400 validation error.
 test.describe('Defecto BUG-05 en la API', {
   tag: '@defect',
-  annotation: { type: 'issue', description: 'qa/05-defectos.md#bug-05' },
+  annotation: { type: 'issue', description: 'https://github.com/rprecigapuentes/bia-prueba-qa/issues/17' },
 }, () => {
   test('BUG-05 Verifica que page -1 responde 400 con el formato de error', async ({ api }) => {
     test.fail();

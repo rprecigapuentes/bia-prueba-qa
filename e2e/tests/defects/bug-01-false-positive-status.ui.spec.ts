@@ -4,7 +4,7 @@ import { expect, test } from '../../src/fixtures/test';
 // BUG-01: the ledger stamps M-106 (FALSE_POSITIVE) as Alerta instead of Normal.
 test.describe('Defecto BUG-01 en la UI', {
   tag: '@defect',
-  annotation: { type: 'issue', description: 'qa/05-defectos.md#bug-01' },
+  annotation: { type: 'issue', description: 'https://github.com/rprecigapuentes/bia-prueba-qa/issues/13' },
 }, () => {
   test('BUG-01 Verifica que el libro muestra a M-106 (falso positivo) con el estado Normal', async ({ ledgerPage }) => {
     test.fail();

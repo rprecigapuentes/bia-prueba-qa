@@ -5,7 +5,7 @@ import { expect, test } from '../../src/fixtures/test';
 // BUG-01: M-106 (FALSE_POSITIVE) reports ALERT, so the dashboard counts 8 / 2 / 2 instead of 9 / 1 / 2.
 test.describe('Defecto BUG-01 en la API', {
   tag: '@defect',
-  annotation: { type: 'issue', description: 'qa/05-defectos.md#bug-01' },
+  annotation: { type: 'issue', description: 'https://github.com/rprecigapuentes/bia-prueba-qa/issues/13' },
 }, () => {
   test('BUG-01 Verifica que el detalle de M-106 (falso positivo) tiene estado NORMAL', async ({ api }) => {
     test.fail();
