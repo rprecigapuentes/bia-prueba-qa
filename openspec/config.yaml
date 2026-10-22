@@ -8,7 +8,8 @@ context: |
   Este repo es la entrega de la prueba técnica de QA de Bia sobre EnergIA: backend en Go
   (backend/), frontend en React (frontend/), levantados con `docker compose up -d --build`
   (front en http://localhost:3000, API y Swagger en http://localhost:8080). El enunciado está en
-  PRUEBA_QA.md y el plan de trabajo en PLAN-DE-TRABAJO.md.
+  PRUEBA_QA.md, el plan de trabajo en PLAN-DE-TRABAJO.md y las convenciones de ramas, commits,
+  PRs, identificadores y código en CONVENTIONS.md, que todo change MUST seguir.
 
   La documentación (README.md, backend/README.md, frontend/README.md, frontend/PRODUCT.md) es el
   oráculo: lo que el sistema DEBERÍA hacer. Un resultado distinto al oráculo es un defecto
