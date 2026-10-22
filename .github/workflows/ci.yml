@@ -1,0 +1,133 @@
+# CI: fast feedback on every pull request and push to main, following the test pyramid.
+# static → unit (Go, Vitest) → smoke against the dockerized app. Known defects are reported, not blocking.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Static checks (lint, typecheck)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
+  unit-backend:
+    name: Unit · backend (go test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: go test with coverage
+        run: go test -cover ./... | tee -a "$GITHUB_STEP_SUMMARY"
+
+  unit-frontend:
+    name: Unit · frontend (Vitest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      # Includes the *.defects.test.* files: `it.fails` keeps them green while the defect exists.
+      - run: pnpm test
+
+  known-defects:
+    name: Known defects · go test -tags defects (non-blocking)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: Defect tests (expected to fail until fixed)
+        run: |
+          set +e
+          go test -tags defects -run BUG ./internal/meter ./internal/httpx ./internal/analysis/classify > defects.txt 2>&1
+          status=$?
+          { echo '### Known defects (unit)'; echo '```'; grep -E '^(--- FAIL|    .*BUG-)' defects.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit $status
+
+  smoke:
+    name: Smoke · API + Chromium
+    needs: [static, unit-backend, unit-frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the app
+        working-directory: .
+        run: |
+          cp .env.example .env
+          docker compose up -d --build
+      - name: Wait for the API and the UI
+        run: |
+          curl --retry 30 --retry-delay 2 --retry-connrefused -fsS http://localhost:8080/health
+          curl --retry 30 --retry-delay 2 --retry-connrefused -fsS http://localhost:3000 > /dev/null
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --grep @smoke --project=api --project=chromium
+      - name: Upload the HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: e2e/playwright-report
+          if-no-files-found: ignore
+      - name: Upload traces and videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-results
+          path: e2e/test-results
+          if-no-files-found: ignore

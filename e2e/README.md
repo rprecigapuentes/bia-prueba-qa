@@ -90,15 +90,53 @@ Un test `@defect` afirma lo que la documentación dice, no lo que hace la app ho
 
 Los tests de `@regression` no incluyen las aserciones afectadas por un defecto conocido; viven solo en `tests/defects/`. BUG-06 a BUG-09 quedan como casos manuales: `size` 0 y el estado en minúsculas no están en las tablas de límites ni de particiones.
 
-## Integración continua
+## Pipelines
 
-`.github/workflows/e2e.yml` corre en `push` a `main`, en `pull_request` y a mano (`workflow_dispatch`). El job:
+Hay dos workflows con funciones distintas. CI da feedback rápido en cada cambio, y Continuous Testing corre la suite completa en paralelo de forma programada.
 
-1. Copia `.env.example` a `.env` y levanta la app con `docker compose up -d --build`.
-2. Espera `/health` de la API y la UI con `curl --retry`.
-3. Instala Node 22, `npm ci` y los navegadores (`npx playwright install --with-deps chromium firefox`).
-4. Corre `npm run lint`, `npm run typecheck` y `npm test`.
-5. Sube `playwright-report/` siempre y `test-results/` (trazas y videos) cuando algo falla.
+### CI (`.github/workflows/ci.yml`)
+
+Corre en cada `pull_request`, en cada `push` a `main` y a mano. Sigue la pirámide de pruebas: primero lo barato y rápido, la UI al final.
+
+```mermaid
+flowchart LR
+  S[static: lint + typecheck] --> SM[smoke: API + Chromium]
+  UB[unit-backend: go test] --> SM
+  UF[unit-frontend: Vitest] --> SM
+  KD[known-defects: go test -tags defects]:::nb
+  classDef nb stroke-dasharray: 4 4
+```
+
+| Job | Qué hace | Bloquea |
+|---|---|---|
+| `static` | ESLint con `eslint-plugin-playwright` y TypeScript estricto | Sí |
+| `unit-backend` | `go test -cover ./...` con la cobertura en el resumen del job | Sí |
+| `unit-frontend` | `pnpm test`; los `*.defects.test.*` usan `it.fails` y siguen en verde | Sí |
+| `known-defects` | `go test -tags defects`; lista en el resumen los BUG que siguen abiertos | No (`continue-on-error`) |
+| `smoke` | Levanta la app con Docker y corre `@smoke` en API y Chromium. Solo arranca si pasaron los tres anteriores | Sí |
+
+### Continuous Testing (`.github/workflows/continuous-testing.yml`)
+
+Corre todos los días a las 06:00 hora de Bogotá (`cron: 0 11 * * *`). También se puede lanzar a mano con la suite a elegir (`all`, `regression`, `defects`, `smoke`), y corre en los PR que modifican el propio workflow.
+
+```mermaid
+flowchart LR
+  A[api 1/1] --> R[report: merge-reports → HTML]
+  C1[chromium 1/2] --> R
+  C2[chromium 2/2] --> R
+  F1[firefox 1/2] --> R
+  F2[firefox 2/2] --> R
+```
+
+- **Paralelo:** una matriz de 5 jobs: API, y Chromium y Firefox partidos en 2 shards cada uno con `--shard`. Usa `fail-fast: false`, así que un shard roto no cancela los demás.
+- **Aislado:** cada job corre en su propio runner con su propia app levantada con `docker compose`. No hay estado compartido entre jobs, y dentro de cada job los tests corren con `fullyParallel`.
+- **Un solo reporte:** cada shard sube un *blob report*. El job `report` los une con `npx playwright merge-reports` en un HTML (artefacto `continuous-testing-report`) y escribe en el resumen del run el conteo de esperados, inesperados, flaky y omitidos.
+
+Para lanzarlo a mano:
+
+```bash
+gh workflow run continuous-testing.yml -f suite=all
+```
 
 ## Reglas
 
