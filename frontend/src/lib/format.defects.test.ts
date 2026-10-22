@@ -4,14 +4,14 @@ import { formatPlantDay, formatPlantTime } from './format'
 // and fails once it is fixed, which is the signal to turn it into a regular test.
 //
 // vite.config.ts forces TZ=UTC for every test, which hides BUG-02. Here the clock runs in the
-// operators' zone, as in their browser.
+// operators' zone, as in their browser. vi.stubEnv keeps the file free of Node types, so the
+// production build (tsc over src/) still compiles.
 describe('hora de planta en la zona del operador (America/Bogota)', () => {
-  const previousTz = process.env.TZ
   beforeAll(() => {
-    process.env.TZ = 'America/Bogota'
+    vi.stubEnv('TZ', 'America/Bogota')
   })
   afterAll(() => {
-    process.env.TZ = previousTz
+    vi.unstubAllEnvs()
   })
 
   it.fails('BUG-02: formatPlantTime no convierte 14:00 de planta a la zona del navegador', () => {
