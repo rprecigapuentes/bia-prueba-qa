@@ -1,0 +1,22 @@
+# SM-08 Run AI Analysis: lanzar y consultar hasta COMPLETED
+# Fecha: 2026-10-22T11:15:30-05:00
+$ curl -sS -i -X POST http://localhost:8080/api/v1/ai/analyze -H "Authorization: Bearer $TOKEN"
+
+HTTP/1.1 202 Accepted
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 16:15:30 GMT
+Content-Length: 690
+
+{"id":"AN-0003","status":"RUNNING","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T16:15:30.692048681Z","finished_at":null,"duration_ms":0,"steps":[{"key":"readings","label":"Lecturas","status":"PENDING","detail":""},{"key":"baseline","label":"Baseline","status":"PENDING","detail":""},{"key":"detection","label":"Detección","status":"PENDING","detail":""},{"key":"correlation","label":"Correlación","status":"PENDING","detail":""},{"key":"events","label":"Eventos","status":"PENDING","detail":""},{"key":"explanation","label":"Explicación","status":"PENDING","detail":""},{"key":"recommendation","label":"Recomendación","status":"PENDING","detail":""}],"summary":null}
+
+# id extraido: AN-0003
+# Sondeo: for i in $(seq 1 30); do curl -sS -i http://localhost:8080/api/v1/ai/analysis/AN-0003 -H "Authorization: Bearer $TOKEN"; sleep 1; done (hasta status COMPLETED)
+# intento 1: "status":"COMPLETED"
+
+# Respuesta final completa (intento 1)
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 16:15:30 GMT
+Content-Length: 1190
+
+{"id":"AN-0003","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T16:15:30.692048681Z","finished_at":"2026-10-22T16:15:30.720549219Z","duration_ms":28,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
