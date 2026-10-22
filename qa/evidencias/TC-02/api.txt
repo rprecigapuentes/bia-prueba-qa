@@ -1,0 +1,20 @@
+# email y password vacíos
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/auth/login' -H 'Content-Type: application/json' -d '{"email":"","password":""}'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:36 GMT
+Content-Length: 172
+
+{"status_code":400,"message":"Datos inválidos","errors":["email es obligatorio","password es obligatorio"],"timestamp":"2026-10-22T19:16:36Z","path":"/api/v1/auth/login"}
+
+
+# sin body
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/auth/login' -H 'Content-Type: application/json'
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:36 GMT
+Content-Length: 172
+
+{"status_code":400,"message":"Datos inválidos","errors":["email es obligatorio","password es obligatorio"],"timestamp":"2026-10-22T19:16:36Z","path":"/api/v1/auth/login"}
+
+

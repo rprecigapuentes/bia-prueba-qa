@@ -1,0 +1,8 @@
+# Modelo PICT de POST /api/v1/meter/getAll (backend/README.md, "Body de POST /meter/getAll").
+# "omitido" = el campo no se envía y aplica el valor por defecto documentado.
+# Clases de búsqueda: parcial (109), exacta (M-109), minúsculas (m-10), prefijo común (M-1), sin coincidencia (M-999).
+
+status:     omitido, NORMAL, ALERT, CRITICAL
+sort_by:    omitido, meter_id, consumption, variation, severity
+sort_order: omitido, ASC, DESC
+meter_id:   omitido, 109, M-109, m-10, M-1, M-999

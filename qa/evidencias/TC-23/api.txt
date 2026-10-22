@@ -1,0 +1,128 @@
+# POST /ai/analyze, petición A (en paralelo con B)
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/ai/analyze' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' &
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:39 GMT
+Content-Length: 690
+
+{"id":"AN-0016","status":"RUNNING","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:39.024052273Z","finished_at":null,"duration_ms":0,"steps":[{"key":"readings","label":"Lecturas","status":"RUNNING","detail":""},{"key":"baseline","label":"Baseline","status":"PENDING","detail":""},{"key":"detection","label":"Detección","status":"PENDING","detail":""},{"key":"correlation","label":"Correlación","status":"PENDING","detail":""},{"key":"events","label":"Eventos","status":"PENDING","detail":""},{"key":"explanation","label":"Explicación","status":"PENDING","detail":""},{"key":"recommendation","label":"Recomendación","status":"PENDING","detail":""}],"summary":null}
+
+
+# POST /ai/analyze, petición B (en paralelo con A)
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/ai/analyze' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' &
+HTTP/1.1 202 Accepted
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:39 GMT
+Content-Length: 690
+
+{"id":"AN-0016","status":"RUNNING","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:39.024052273Z","finished_at":null,"duration_ms":0,"steps":[{"key":"readings","label":"Lecturas","status":"PENDING","detail":""},{"key":"baseline","label":"Baseline","status":"PENDING","detail":""},{"key":"detection","label":"Detección","status":"PENDING","detail":""},{"key":"correlation","label":"Correlación","status":"PENDING","detail":""},{"key":"events","label":"Eventos","status":"PENDING","detail":""},{"key":"explanation","label":"Explicación","status":"PENDING","detail":""},{"key":"recommendation","label":"Recomendación","status":"PENDING","detail":""}],"summary":null}
+
+
+# GET análisis AN-0016 (devuelto por la petición A)
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/AN-0016' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:39 GMT
+Content-Length: 1189
+
+{"id":"AN-0016","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:39.024052273Z","finished_at":"2026-10-22T19:16:39.030375803Z","duration_ms":6,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# GET análisis AN-0016 (devuelto por la petición B)
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/AN-0016' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:39 GMT
+Content-Length: 1189
+
+{"id":"AN-0016","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:39.024052273Z","finished_at":"2026-10-22T19:16:39.030375803Z","duration_ms":6,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# GET análisis AN-0016 2 s después
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/AN-0016' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:41 GMT
+Content-Length: 1189
+
+{"id":"AN-0016","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:39.024052273Z","finished_at":"2026-10-22T19:16:39.030375803Z","duration_ms":6,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# GET análisis AN-0016 2 s después
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/AN-0016' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:41 GMT
+Content-Length: 1189
+
+{"id":"AN-0016","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:39.024052273Z","finished_at":"2026-10-22T19:16:39.030375803Z","duration_ms":6,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# GET análisis latest
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/latest' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:41 GMT
+Content-Length: 1189
+
+{"id":"AN-0016","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:39.024052273Z","finished_at":"2026-10-22T19:16:39.030375803Z","duration_ms":6,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# Ronda 2: 5 POST /ai/analyze simultáneos (se guarda status HTTP y body de cada uno)
+$ for i in 1 2 3 4 5; do curl -sS -i -X POST 'http://localhost:8080/api/v1/ai/analyze' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' & done; wait
+## petición 1
+HTTP/1.1 202 Accepted
+id=AN-0017 status=RUNNING started_at=2026-10-22T19:16:41.527644809Z
+## petición 2
+HTTP/1.1 200 OK
+id=AN-0017 status=RUNNING started_at=2026-10-22T19:16:41.527644809Z
+## petición 3
+HTTP/1.1 202 Accepted
+id=AN-0018 status=RUNNING started_at=2026-10-22T19:16:41.536515873Z
+## petición 4
+HTTP/1.1 202 Accepted
+id=AN-0019 status=RUNNING started_at=2026-10-22T19:16:41.543163013Z
+## petición 5
+HTTP/1.1 200 OK
+id=AN-0019 status=RUNNING started_at=2026-10-22T19:16:41.543163013Z
+
+# ronda 2: GET análisis AN-0017 (started_at / finished_at para comprobar que no se solapan)
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/AN-0017' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:42 GMT
+Content-Length: 1189
+
+{"id":"AN-0017","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:41.527644809Z","finished_at":"2026-10-22T19:16:41.533233178Z","duration_ms":5,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# ronda 2: GET análisis AN-0018 (started_at / finished_at para comprobar que no se solapan)
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/AN-0018' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:42 GMT
+Content-Length: 1189
+
+{"id":"AN-0018","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:41.536515873Z","finished_at":"2026-10-22T19:16:41.541116797Z","duration_ms":4,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# ronda 2: GET análisis AN-0019 (started_at / finished_at para comprobar que no se solapan)
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/AN-0019' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:42 GMT
+Content-Length: 1189
+
+{"id":"AN-0019","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:41.543163013Z","finished_at":"2026-10-22T19:16:41.547608646Z","duration_ms":4,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
+# GET análisis latest tras la ronda 2
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/ai/analysis/latest' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:42 GMT
+Content-Length: 1189
+
+{"id":"AN-0019","status":"COMPLETED","trigger":"MANUAL","narrator":"engine","started_at":"2026-10-22T19:16:41.543163013Z","finished_at":"2026-10-22T19:16:41.547608646Z","duration_ms":4,"steps":[{"key":"readings","label":"Lecturas","status":"DONE","detail":"4.032 lecturas · 12 medidores"},{"key":"baseline","label":"Baseline","status":"DONE","detail":"12 baselines con los primeros 7 días"},{"key":"detection","label":"Detección","status":"DONE","detail":"3 medidores con cambios sostenidos · 1 con lecturas incoherentes"},{"key":"correlation","label":"Correlación","status":"DONE","detail":"4 casos clasificados · la corriente confirma el cambio en 3"},{"key":"events","label":"Eventos","status":"DONE","detail":"4 eventos evaluados · 2 explican el cambio"},{"key":"explanation","label":"Explicación","status":"DONE","detail":"Redacción del motor (sin OPENAI_API_KEY)"},{"key":"recommendation","label":"Recomendación","status":"DONE","detail":"4 anomalías detectadas · 2 requieren atención prioritaria"}],"summary":{"anomalies_detected":4,"requiring_attention":2,"avg_confidence":0.9,"by_type":{"DATA_QUALITY":1,"EXPLAINABLE_ANOMALY":1,"FALSE_POSITIVE":1,"REAL_ANOMALY":1}}}
+
+
