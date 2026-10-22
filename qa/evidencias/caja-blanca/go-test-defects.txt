@@ -1,0 +1,41 @@
+$ go test ./...
+ok  	energyai/internal/analysis/classify	0.017s
+?   	energyai/internal/analysis/model	[no test files]
+ok  	energyai/internal/analysis/quality	0.029s
+ok  	energyai/internal/analysis/stats	0.016s
+?   	energyai/internal/analysis/variables	[no test files]
+?   	energyai/internal/anomaly	[no test files]
+ok  	energyai/internal/auth	0.553s
+ok  	energyai/internal/config	0.013s
+?   	energyai/internal/dashboard	[no test files]
+ok  	energyai/internal/data	0.035s
+?   	energyai/internal/httpx	[no test files]
+ok  	energyai/internal/meter	0.081s
+ok  	energyai/internal/server	0.422s
+?   	energyai/internal/store	[no test files]
+?   	energyai/internal/testutil	[no test files]
+
+$ go test -tags defects ./internal/meter ./internal/httpx ./internal/analysis/classify
+--- FAIL: TestBUG01_FalsePositiveIsNormal (0.00s)
+    meter_defects_test.go:19: BUG-01: StatusOf(FALSE_POSITIVE) = ALERT, esperaba NORMAL
+--- FAIL: TestBUG01_AlertFilterExcludesFalsePositive (0.01s)
+    meter_defects_test.go:28: BUG-01: filtro ALERT = [M-104 M-106], esperaba [M-104]
+--- FAIL: TestBUG04_SearchIgnoresCase (0.01s)
+    meter_defects_test.go:39: BUG-04: buscar "m-109" = [], esperaba [M-109]
+    meter_defects_test.go:39: BUG-04: buscar "m-1" = [], esperaba [M-101 M-102 M-103 M-104 M-105 M-106 M-107 M-108 M-109 M-110 M-111 M-112]
+FAIL
+FAIL	energyai/internal/meter	0.022s
+--- FAIL: TestBUG05_NegativePageIsRejected (0.00s)
+    paging_defects_test.go:13: BUG-05: Normalize(page=-1) no devuelve errores; esperaba un error de validación
+    paging_defects_test.go:13: BUG-05: Normalize(page=-10) no devuelve errores; esperaba un error de validación
+--- FAIL: TestBUG05_PaginateDoesNotPanicOnNegativePage (0.00s)
+    paging_defects_test.go:22: BUG-05: Paginate(page=-1) entra en pánico: runtime error: slice bounds out of range [:-10]
+FAIL
+FAIL	energyai/internal/httpx	0.004s
+--- FAIL: TestBUG10_SeverityBoundariesAreExclusive (0.00s)
+    severity_defects_test.go:30: BUG-10: realSeverity(50.00 %, activo=true) = HIGH, esperaba MEDIUM
+    severity_defects_test.go:30: BUG-10: realSeverity(20.00 %, activo=false) = MEDIUM, esperaba LOW
+    severity_defects_test.go:30: BUG-10: realSeverity(-50.00 %, activo=true) = HIGH, esperaba MEDIUM
+FAIL
+FAIL	energyai/internal/analysis/classify	0.004s
+FAIL
