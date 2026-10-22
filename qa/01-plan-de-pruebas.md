@@ -26,6 +26,21 @@ Producto: plataforma que monitorea 12 medidores eléctricos y clasifica anomalí
 | Móvil y navegadores fuera de Chromium y Firefox | `PRODUCT.md` define uso en escritorio |
 | Despliegue en servidor | No forma parte del build entregado para prueba |
 
+## Oráculos
+
+Un oráculo es la heurística con la que se decide si un resultado es correcto (Kaner). Ningún oráculo es suficiente por sí solo: se combinan, y cuando se contradicen decide el criterio humano. Se usan los oráculos de consistencia HICCUPPS que aplican a este build.
+
+| Oráculo | Fuente en EnergIA | Uso |
+|---|---|---|
+| **Claims** (lo que el producto afirma) | `README.md`, `backend/README.md`, `frontend/README.md`, `PRODUCT.md`, Swagger | Resultado esperado de casi todos los casos; prevalece si contradice a otro oráculo |
+| **Product** (dentro del producto) | La misma cifra o estado en API, Despacho, libro, detalle e investigación | Matriz de consistencia entre capas |
+| **Purpose** (para qué existe) | "Qué revisar primero, por qué y qué hacer" (`PRODUCT.md`) | Juzgar si un comportamiento que no contradice la doc frustra al operador |
+| **User desires** (lo que espera el usuario) | Operador de planta en Colombia, `America/Bogota`, sesiones cortas | Horas, idioma y lectura rápida del estado |
+| **Standards** | WCAG 2.1 AA (declarado en `PRODUCT.md`), formato es-CO, HTTP (401, 400, 404) | Accesibilidad, formato numérico, códigos de la API |
+| History, Image, Comparable products | No aplican | Hay un solo build, no hay marca publicada ni producto comparable de referencia |
+
+Cada caso de `qa/03` y cada defecto de `qa/05` nombra el oráculo que respalda su resultado esperado.
+
 ## Riesgos
 
 Impacto contado para el operador de planta. Escala 1–3; riesgo = impacto × probabilidad.

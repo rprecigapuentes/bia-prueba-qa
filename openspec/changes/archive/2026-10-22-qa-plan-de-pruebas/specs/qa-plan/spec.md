@@ -41,6 +41,13 @@ El plan SHALL definir criterios de entrada, de suspensión y de salida verificab
 - **WHEN** falla un caso de la suite de humo
 - **THEN** el criterio de suspensión del plan indica que se detiene la ejecución funcional y se reporta el bloqueo
 
+### Requirement: Oráculos declarados
+El plan SHALL declarar qué oráculos de consistencia (HICCUPPS) se usan, con la fuente concreta de cada uno en el producto, MUST indicar cuáles no aplican y por qué, y MUST definir qué oráculo prevalece cuando dos se contradicen.
+
+#### Scenario: Dos oráculos se contradicen
+- **WHEN** la documentación y otra parte del producto muestran valores distintos para el mismo dato
+- **THEN** el plan indica qué oráculo prevalece y el caso o defecto lo nombra como argumento
+
 ### Requirement: Uso de IA declarado
 El plan SHALL describir qué herramientas de IA se usaron, para qué tareas, y qué decisiones quedaron en manos de la persona evaluada.
 
