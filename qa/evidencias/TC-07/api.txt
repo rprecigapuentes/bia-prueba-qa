@@ -1,0 +1,20 @@
+# meter_id M-999 (getAll)
+$ curl -sS -i -X POST 'http://localhost:8080/api/v1/meter/getAll' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…' -H 'Content-Type: application/json' -d '{"filter":{"meter_id":"M-999"},"pagination":{"page":1,"size":100}}'
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 42
+
+{"page":1,"size":100,"count":0,"rows":[]}
+
+
+# getById M-999
+$ curl -sS -i -X GET 'http://localhost:8080/api/v1/meter/getById/M-999' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIs…'
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Date: Thu, 22 Oct 2026 19:16:37 GMT
+Content-Length: 126
+
+{"status_code":404,"message":"Medidor no encontrado","timestamp":"2026-10-22T19:16:37Z","path":"/api/v1/meter/getById/M-999"}
+
+
