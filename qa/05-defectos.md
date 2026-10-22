@@ -31,6 +31,27 @@ Defectos del build `026b991` encontrados por la caja negra ([`03`](03-casos-caja
 - **Severidad:** **Alta** = el operador toma una decisión equivocada o pierde información crítica; **Media** = una función falla pero hay un camino alternativo; **Baja** = presentación o contrato, sin efecto en la decisión.
 - **Prioridad:** **Alta** = corregir antes de liberar; **Media** = en la siguiente iteración; **Baja** = cuando haya capacidad.
 
+## Evidencia visual
+
+Capturas anotadas, con un círculo sobre el elemento que prueba el defecto y lo que la documentación espera. Las genera un script reproducible (`node qa/evidencias/anotadas/capture-annotated.mjs`), con Chromium en `America/Bogota`.
+
+| Defecto | Captura |
+|---|---|
+| BUG-01 | [KPIs de Despacho](evidencias/anotadas/BUG-01-kpis-despacho.png) · [filtro Alertas](evidencias/anotadas/BUG-01-filtro-alertas.png) |
+| BUG-02 | [Detectada 09:00 vs. "desde 12/09 14:00"](evidencias/anotadas/BUG-02-hora-despacho.png) |
+| BUG-03 | [Siguiente deshabilitado](evidencias/anotadas/BUG-03-paginacion.png) |
+| BUG-04 | [Búsqueda en minúsculas](evidencias/anotadas/BUG-04-busqueda-minusculas.png) |
+| BUG-08 | [3 órdenes abiertas vs. Orden 1 de 4](evidencias/anotadas/BUG-08-ordenes-despacho.png) |
+| BUG-09 | [Texto en inglés en M-104](evidencias/anotadas/BUG-09-ingles-m104.png) |
+
+Ejecuciones grabadas de Playwright (video `.webm` y trace `.zip`, que se abre con `npx playwright show-trace <archivo>` o en https://trace.playwright.dev):
+
+| Test | Video | Trace |
+|---|---|---|
+| Flujo de negocio M-109 (TC-19) | [webm](evidencias/e2e/flujo-negocio-m109.webm) | [trace](evidencias/e2e/flujo-negocio-m109.trace.zip) |
+| BUG-02 hora de planta (`test.fail()`) | [webm](evidencias/e2e/bug-02-hora-planta.webm) | [trace](evidencias/e2e/bug-02-hora-planta.trace.zip) |
+| BUG-03 paginación (`test.fail()`) | [webm](evidencias/e2e/bug-03-paginacion.webm) | [trace](evidencias/e2e/bug-03-paginacion.trace.zip) |
+
 ## BUG-01
 
 **Un falso positivo (M-106) aparece en estado Alerta en lugar de Normal**
