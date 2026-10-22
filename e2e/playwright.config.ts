@@ -12,7 +12,9 @@ export default defineConfig({
     baseURL: env.baseUrl,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    // PW_VIDEO=on and PW_SLOWMO=<ms> record a watchable run for the delivery video.
+    video: process.env.PW_VIDEO === 'on' ? 'on' : 'retain-on-failure',
+    launchOptions: { slowMo: Number(process.env.PW_SLOWMO ?? 0) },
   },
   projects: [
     {
