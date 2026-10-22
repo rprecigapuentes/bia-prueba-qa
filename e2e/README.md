@@ -111,7 +111,7 @@ flowchart LR
 |---|---|---|
 | `static` | ESLint con `eslint-plugin-playwright` y TypeScript estricto | Sí |
 | `unit-backend` | `go test -cover ./...` con la cobertura en el resumen del job | Sí |
-| `unit-frontend` | `pnpm test`; los `*.defects.test.*` usan `it.fails` y siguen en verde | Sí |
+| `unit-frontend` | `pnpm typecheck`, `pnpm lint` y `pnpm test`; los `*.defects.test.*` usan `it.fails` y siguen en verde | Sí |
 | `known-defects` | `go test -tags defects`; lista en el resumen los BUG que siguen abiertos | No (`continue-on-error`) |
 | `smoke` | Levanta la app con Docker y corre `@smoke` en API y Chromium. Solo arranca si pasaron los tres anteriores | Sí |
 

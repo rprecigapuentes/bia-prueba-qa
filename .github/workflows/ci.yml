@@ -48,7 +48,7 @@ jobs:
         run: go test -cover ./... | tee -a "$GITHUB_STEP_SUMMARY"
 
   unit-frontend:
-    name: Unit · frontend (Vitest)
+    name: Unit · frontend (typecheck, lint, Vitest)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     defaults:
@@ -65,6 +65,9 @@ jobs:
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
+      # The Docker build runs tsc over src/, test files included, so type errors must fail here first.
+      - run: pnpm typecheck
+      - run: pnpm lint
       # Includes the *.defects.test.* files: `it.fails` keeps them green while the defect exists.
       - run: pnpm test
 
