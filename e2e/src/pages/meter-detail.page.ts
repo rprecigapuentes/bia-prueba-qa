@@ -20,6 +20,18 @@ export class MeterDetailPage extends BasePage {
     return this.summary.getByText(/^(Normal|Alerta|Crítica)$/);
   }
 
+  consumption(): Locator {
+    return this.keyFigure('Consumo actual · 24 h');
+  }
+
+  baseline(): Locator {
+    return this.keyFigure('Baseline diario');
+  }
+
+  variation(): Locator {
+    return this.keyFigure('Variación');
+  }
+
   lastReading(): Locator {
     return this.summary.getByText(/Última lectura/);
   }
@@ -43,6 +55,11 @@ export class MeterDetailPage extends BasePage {
 
   async openInvestigation(): Promise<void> {
     await this.order().getByRole('link', { name: 'Abrir investigación' }).click();
+  }
+
+  private keyFigure(label: string): Locator {
+    // Label and value are sibling spans without roles; XPath picks the value right after its label.
+    return this.summary.getByText(label, { exact: true }).locator('xpath=following-sibling::span[1]');
   }
 
   id(): string {
