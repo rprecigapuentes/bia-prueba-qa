@@ -110,8 +110,8 @@ jobs:
           docker compose up -d --build
       - name: Wait for the API and the UI
         run: |
-          curl --retry 30 --retry-delay 2 --retry-connrefused -fsS http://localhost:8080/health
-          curl --retry 30 --retry-delay 2 --retry-connrefused -fsS http://localhost:3000 > /dev/null
+          curl --retry 30 --retry-delay 2 --retry-all-errors -fsS http://localhost:8080/health
+          curl --retry 30 --retry-delay 2 --retry-all-errors -fsS http://localhost:3000 > /dev/null
       - uses: actions/setup-node@v4
         with:
           node-version: 22
