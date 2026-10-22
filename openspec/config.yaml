@@ -1,0 +1,51 @@
+schema: spec-driven
+
+context: |
+  Language: es
+  All artifacts must be written in es.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Este repo es la entrega de la prueba técnica de QA de Bia sobre EnergIA: backend en Go
+  (backend/), frontend en React (frontend/), levantados con `docker compose up -d --build`
+  (front en http://localhost:3000, API y Swagger en http://localhost:8080). El enunciado está en
+  PRUEBA_QA.md y el plan de trabajo en PLAN-DE-TRABAJO.md.
+
+  La documentación (README.md, backend/README.md, frontend/README.md, frontend/PRODUCT.md) es el
+  oráculo: lo que el sistema DEBERÍA hacer. Un resultado distinto al oráculo es un defecto
+  candidato, no un error del test.
+
+  Regla del enunciado: no se modifica el código de la aplicación (backend/, frontend/) para
+  arreglar defectos. Solo se agregan pruebas y documentos. Un cambio que toque backend/** o
+  frontend/src/** fuera de archivos *_test.go o *.test.ts(x) es un bloqueante de revisión.
+
+  Los specs describen los entregables de QA (qa/) y el framework de automatización (e2e/), nunca
+  el comportamiento de EnergIA. El comportamiento esperado de EnergIA se cita desde el oráculo.
+
+  Entregables: qa/01-plan-de-pruebas.md, qa/02-smoke.md, qa/03-casos-caja-negra.md (+ .csv),
+  qa/04-caja-blanca.md, qa/05-defectos.md, qa/evidencias/, e2e/ (Playwright + TypeScript).
+
+  Dominios de specs: qa-plan, qa-smoke, qa-black-box, qa-white-box, qa-defects, e2e-framework,
+  e2e-ui, e2e-api, e2e-ci.
+
+rules:
+  proposal:
+    - Under 300 words.
+    - State what is out of scope, not only what is in it.
+  specs:
+    - A requirement describes a QA deliverable or the automation framework, never EnergIA's behaviour.
+    - Describe only what this change adds, modifies or removes.
+  design:
+    - Skip this artifact unless the change introduces a new pattern in e2e/.
+  tasks:
+    - Each task should be completable as one Conventional Commit.
+
+operations:
+  apply:
+    guidance:
+      - In e2e/, run `npx tsc --noEmit` and the affected Playwright tests before finishing.
+      - Commit messages carry no Co-Authored-By trailer and no agent attribution. The commits are the author's.
+      - Tests reach the browser only through a page object. A spec that calls page.locator or page.goto directly is a review blocker.
+      - Locators use getByRole, getByLabel or getByText first. CSS or XPath only with a written reason.
+      - No waitForTimeout and no fixed waits. Use web-first expect assertions.
+      - A test that proves an open defect is marked test.fail() with the defect ID (BUG-xx) in its title and a one-line reason.
+      - Comment only where the code cannot speak for itself.
