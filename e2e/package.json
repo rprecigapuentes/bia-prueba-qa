@@ -1,15 +1,25 @@
 {
-  "name": "e2e",
+  "name": "energia-e2e",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
+  "description": "Playwright suite for the EnergIA QA technical challenge",
   "type": "commonjs",
+  "scripts": {
+    "setup": "npm ci && playwright install chromium firefox",
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:api": "playwright test --project=api",
+    "test:ui": "playwright test --project=chromium --project=firefox",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "report": "playwright show-report"
+  },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
-    "@types/node": "^26.6.5"
+    "@types/node": "^26.6.5",
+    "eslint": "^10.13.0",
+    "eslint-plugin-playwright": "^2.12.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0"
   }
 }
