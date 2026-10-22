@@ -62,3 +62,18 @@ export const STATUS_LABEL: Record<MeterStatus, string> = {
   ALERT: 'Alerta',
   CRITICAL: 'Crítica',
 };
+
+// qa/03-casos-caja-negra.md, table 2.1: M-109 and M-112 CRITICAL, M-104 ALERT, every other meter NORMAL
+// (M-106 included, rule D2).
+export const EXPECTED_STATUS: Readonly<Record<string, MeterStatus>> = Object.fromEntries(
+  METER_IDS.map((meterId) => [
+    meterId,
+    EXPECTED_ANOMALIES.find((anomaly) => anomaly.meterId === meterId)?.status ?? 'NORMAL',
+  ]),
+);
+
+// qa/03-casos-caja-negra.md, section 4, rule 4: without anomaly < LOW < MEDIUM < HIGH, natural order.
+export const SEVERITY_RANK: Readonly<Record<Severity, number>> = { LOW: 1, MEDIUM: 2, HIGH: 3 };
+
+// qa/03-casos-caja-negra.md, table 2.4: 14 days of hourly readings from 01/09 00:00, plant time.
+export const LAST_READING_PLANT_TIME = '14/09 23:00';
