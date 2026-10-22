@@ -16,5 +16,5 @@
 
 ## 4. CI y documentación
 
-- [ ] 4.1 Escribir `.github/workflows/e2e.yml` y verificar que el job pasa en el PR
+- [x] 4.1 Escribir `.github/workflows/e2e.yml` y verificar que el job pasa en el PR
 - [x] 4.2 Actualizar `e2e/README.md` con las suites nuevas y `@defect`; verificar que los comandos documentados corren
