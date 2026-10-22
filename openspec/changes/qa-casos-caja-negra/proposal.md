@@ -14,7 +14,7 @@ La Parte C pesa, junto con los defectos, más de la mitad de la nota, y se eval�
      - tablas de decisión tipo → estado, severidad y prioridad;
      - el modelo PICT con sus combinaciones;
      - la matriz de consistencia doc vs. API vs. UI.
-  3. Entre 20 y 25 casos con el formato `ID · Título · Precondición · Pasos · Datos · Resultado esperado · Resultado obtenido · Estado`, más técnica, riesgo (R1–R9 del plan), capa y evidencia.
+  3. Entre 20 y 25 casos con el formato `ID · Título · Precondición · Pasos · Datos · Resultado esperado · Resultado obtenido · Estado`, más técnica, riesgo (R1–R9 del plan), capa, **oráculo** (HICCUPPS, según la tabla de `qa/01`) y evidencia.
   4. Un resumen de ejecución y los candidatos a defecto (`BUG-xx`) que alimentan el change `qa-reporte-defectos`.
 - `qa/03-casos-caja-negra.csv` con los mismos casos, para abrir en una hoja de cálculo.
 - Evidencias de ejecución en `qa/evidencias/<TC-xx>/`:

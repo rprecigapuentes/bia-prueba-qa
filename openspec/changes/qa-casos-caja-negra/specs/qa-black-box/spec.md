@@ -28,11 +28,15 @@ El documento SHALL contener entre 15 y 25 casos, cada caso MUST indicar el riesg
 - **THEN** más de la mitad cubren R1, R2, R3 o R4
 
 ### Requirement: Formato de caso completo
-Cada caso SHALL tener ID, título, técnica, riesgo, capa, precondición, pasos, datos, resultado esperado, resultado obtenido, estado y evidencia, y el resultado esperado MUST citar su fuente (documento y sección, Swagger o criterio explícito).
+Cada caso SHALL tener ID, título, técnica, riesgo, capa, oráculo, precondición, pasos, datos, resultado esperado, resultado obtenido, estado y evidencia. El oráculo MUST ser uno o más de los oráculos HICCUPPS declarados en el plan, y el resultado esperado MUST citar su fuente concreta (documento y sección, Swagger, otra pantalla o capa del producto, o el estándar).
 
 #### Scenario: Resultado esperado sin fuente
 - **WHEN** un caso afirma un resultado esperado
-- **THEN** el caso nombra el documento o la regla que lo respalda
+- **THEN** el caso nombra el oráculo (por ejemplo, Claims o Product) y el documento, la pantalla o la regla que lo respalda
+
+#### Scenario: Caso apoyado en un oráculo no declarado
+- **WHEN** un caso usa un oráculo que el plan marca como no aplicable
+- **THEN** el caso se corrige o el plan se actualiza con la fuente de ese oráculo
 
 ### Requirement: Cobertura de UI y API
 El conjunto de casos SHALL incluir casos ejecutados sobre la UI y casos ejecutados sobre la API, y MUST incluir pruebas negativas y de validación de entradas.
