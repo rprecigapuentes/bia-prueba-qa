@@ -1,0 +1,139 @@
+# Continuous Testing: the full Playwright suite on a schedule and on demand, in parallel.
+# Each matrix job runs on its own runner with its own dockerized app, so jobs never share state.
+# Blob reports from every job are merged into a single HTML report.
+name: continuous-testing
+
+on:
+  schedule:
+    - cron: '0 11 * * *' # 06:00 America/Bogota, every day
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Suite to run
+        type: choice
+        default: all
+        options: [all, regression, defects, smoke]
+  pull_request:
+    paths:
+      - .github/workflows/continuous-testing.yml
+
+concurrency:
+  group: ct-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SUITE: ${{ inputs.suite || 'all' }}
+
+jobs:
+  e2e:
+    name: ${{ matrix.project }} · shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { project: api, shard: 1/1, browser: '' }
+          - { project: chromium, shard: 1/2, browser: chromium }
+          - { project: chromium, shard: 2/2, browser: chromium }
+          - { project: firefox, shard: 1/2, browser: firefox }
+          - { project: firefox, shard: 2/2, browser: firefox }
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start an isolated app for this job
+        working-directory: .
+        run: |
+          cp .env.example .env
+          docker compose up -d --build
+
+      - name: Wait for the API and the UI
+        run: |
+          curl --retry 30 --retry-delay 2 --retry-all-errors -fsS http://localhost:8080/health
+          curl --retry 30 --retry-delay 2 --retry-all-errors -fsS http://localhost:3000 > /dev/null
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - run: npm ci
+
+      - name: Install browsers
+        # The setup project logs in through Chromium, so every UI shard needs it.
+        if: matrix.browser != ''
+        run: npx playwright install --with-deps chromium ${{ matrix.browser }}
+
+      - name: Select the suite
+        id: suite
+        run: |
+          case "$SUITE" in
+            regression) echo "grep=--grep @smoke|@regression" >> "$GITHUB_OUTPUT" ;;
+            defects)    echo "grep=--grep @defect" >> "$GITHUB_OUTPUT" ;;
+            smoke)      echo "grep=--grep @smoke" >> "$GITHUB_OUTPUT" ;;
+            *)          echo "grep=" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Run ${{ matrix.project }} shard ${{ matrix.shard }}
+        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shard }} ${{ steps.suite.outputs.grep }} --reporter=blob
+
+      - name: Upload the blob report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-${{ matrix.project }}-${{ strategy.job-index }}
+          path: e2e/blob-report
+          retention-days: 7
+
+  report:
+    name: Merged report
+    needs: e2e
+    if: always()
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - run: npm ci
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: e2e/all-blob-reports
+          pattern: blob-*
+          merge-multiple: true
+
+      - name: Merge the shards into one HTML report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Write the job summary
+        run: |
+          npx playwright merge-reports --reporter json ./all-blob-reports > merged.json
+          node -e '
+            const r = require("./merged.json").stats;
+            const lines = [
+              "### Continuous Testing · suite: " + (process.env.SUITE || "all"),
+              "",
+              "| Esperados | Inesperados | Flaky | Omitidos | Duración |",
+              "|---|---|---|---|---|",
+              `| ${r.expected} | ${r.unexpected} | ${r.flaky} | ${r.skipped} | ${(r.duration / 1000).toFixed(1)} s |`,
+              "",
+              "Los tests `@defect` cuentan como esperados mientras el defecto siga abierto.",
+            ];
+            require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");
+          '
+
+      - name: Upload the merged HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: continuous-testing-report
+          path: e2e/playwright-report
+          retention-days: 14

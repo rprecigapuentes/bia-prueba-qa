@@ -1,0 +1,146 @@
+# CI: fast feedback on every pull request and push to main, following the test pyramid.
+# static → unit (Go, Vitest) → smoke against the dockerized app. Known defects are reported, not blocking.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Static checks (lint, typecheck)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+
+  unit-backend:
+    name: Unit · backend (go test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: go test with coverage
+        run: go test -cover ./... | tee -a "$GITHUB_STEP_SUMMARY"
+
+  unit-frontend:
+    name: Unit · frontend (typecheck, lint, Vitest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      # The Docker build runs tsc over src/, test files included, so type errors must fail here first.
+      - run: pnpm typecheck
+      - run: pnpm lint
+      # Includes the *.defects.test.* files: `it.fails` keeps them green while the defect exists.
+      - run: pnpm test
+
+  known-defects:
+    # Same contract as test.fail() in Playwright: green while every documented defect still
+    # reproduces, red as soon as one stops failing, so its test gets promoted to a regression test.
+    name: Known defects · go test -tags defects (expected to fail)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: Every defect test must still fail
+        run: |
+          go test -tags defects -run BUG -json ./internal/meter ./internal/httpx ./internal/analysis/classify > defects.json || true
+          jq -r 'select(.Test != null and (.Test | startswith("TestBUG")) and (.Action == "pass" or .Action == "fail")) | "\(.Action) \(.Test)"' defects.json | sort -u > results.txt
+          {
+            echo '### Known defects (unit)'
+            echo '| Test | Resultado |'
+            echo '|---|---|'
+            awk '{ printf "| `%s` | %s |\n", $2, ($1 == "fail" ? "sigue abierto (esperado)" : "**ya pasa: corregido, convertir en regresión**") }' results.txt
+          } >> "$GITHUB_STEP_SUMMARY"
+          test -s results.txt || { echo "::error::No se ejecutó ningún test de defecto"; exit 1; }
+          if grep -q '^pass ' results.txt; then
+            grep '^pass ' results.txt | while read -r _ name; do echo "::error::$name ya pasa: el defecto parece corregido; quita la tag defects y conviértelo en regresión"; done
+            exit 1
+          fi
+          echo "Todos los defectos documentados siguen reproduciéndose: $(wc -l < results.txt) tests fallan como se espera."
+
+  smoke:
+    name: Smoke · API + Chromium
+    needs: [static, unit-backend, unit-frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: e2e
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the app
+        working-directory: .
+        run: |
+          cp .env.example .env
+          docker compose up -d --build
+      - name: Wait for the API and the UI
+        run: |
+          curl --retry 30 --retry-delay 2 --retry-all-errors -fsS http://localhost:8080/health
+          curl --retry 30 --retry-delay 2 --retry-all-errors -fsS http://localhost:3000 > /dev/null
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --grep @smoke --project=api --project=chromium
+      - name: Upload the HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: e2e/playwright-report
+          if-no-files-found: ignore
+      - name: Upload traces and videos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-results
+          path: e2e/test-results
+          if-no-files-found: ignore
