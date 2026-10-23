@@ -29,6 +29,10 @@ export class EnergiaApi {
     return this.request.post(`${V1}/auth/login`, { data: { email, password } });
   }
 
+  loginWithoutBody(): Promise<APIResponse> {
+    return this.request.post(`${V1}/auth/login`);
+  }
+
   async tokenFor(email: string, password: string): Promise<string> {
     const response = await this.login(email, password);
     if (!response.ok()) {
@@ -39,6 +43,11 @@ export class EnergiaApi {
 
   me(): Promise<APIResponse> {
     return this.request.get(`${V1}/auth/me`, { headers: this.headers() });
+  }
+
+  /** Calls /auth/me with an arbitrary Authorization header, or none when `authorization` is null. */
+  meWithAuthorization(authorization: string | null): Promise<APIResponse> {
+    return this.request.get(`${V1}/auth/me`, { headers: authorization ? { Authorization: authorization } : {} });
   }
 
   meterParams(): Promise<APIResponse> {

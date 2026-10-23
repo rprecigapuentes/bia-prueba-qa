@@ -32,6 +32,10 @@ export class InvestigationPage extends BasePage {
     return this.article.getByRole('definition').first();
   }
 
+  confidence(): Locator {
+    return this.article.getByRole('definition').filter({ has: this.page.getByRole('meter', { name: 'Confianza' }) });
+  }
+
   finding(): Locator {
     return this.article.getByRole('heading', { name: 'Qué encontró la IA' });
   }

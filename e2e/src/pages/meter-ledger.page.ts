@@ -38,7 +38,8 @@ export class MeterLedgerPage extends BasePage {
   }
 
   async filterByStatus(status: StatusFilter): Promise<void> {
-    await this.main.getByRole('group', { name: 'Estado' }).getByRole('radio', { name: status }).check();
+    // The radio is visually hidden (sr-only) inside its label, so the click goes to the label text.
+    await this.main.getByRole('group', { name: 'Estado' }).getByText(status, { exact: true }).click();
   }
 
   async search(term: string): Promise<void> {
