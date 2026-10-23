@@ -8,7 +8,14 @@ Orden de aplicación: exploratorio → funcional (tablas de decisión y consiste
 
 Cuatro sesiones de 10 minutos con charter. El registro completo está en [`evidencias/exploratorio/sesiones.md`](evidencias/exploratorio/sesiones.md).
 
-<!-- RESUMEN-EXPLORATORIO -->
+| Sesión | Charter | Ejecutor | Hallazgos que llevaron a casos |
+|---|---|---|---|
+| 1 | Libro de medidores: filtros, búsqueda, orden y paginación | Rosemberth (manual) | Paginación bloqueada en la página 1 (TC-12); conteo por estado 8/2/2 contra 9/1/2 documentado (TC-09, TC-17); búsqueda y estado en la URL (TC-05, TC-21); "M 111" con espacio no encuentra nada (observación de usabilidad) |
+| 2 | Despacho y KPIs contra la documentación | Agente, con Playwright | KPIs 8/2/2 (TC-17); "3 órdenes abiertas" frente a "Orden 1 de 4" (TC-18); M-106 "No escalar" con sello "Alerta" (TC-13) |
+| 3 | Cifras y horas de detalle e investigación | Agente, con Playwright | Cifras de M-109 correctas (TC-19); horas corridas 5 h frente al texto de la IA (TC-20); textos en inglés (TC-25) |
+| 4 | Run AI Analysis, sesión y rutas | Rosemberth (manual) | Análisis repetidos sin solaparse (TC-23); ruta protegida pide login (TC-22); medidor y ruta inexistentes (TC-07); email en mayúsculas (TC-01); sin gestión de usuarios, que `PRODUCT.md` declara fuera del producto |
+
+Rosemberth confirmó a mano, además, los resultados de TC-12 (paginación), TC-21 (filtros tras F5), TC-22, TC-07 y TC-01.
 
 ## 2. Funcional
 
