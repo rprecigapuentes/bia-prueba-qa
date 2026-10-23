@@ -103,8 +103,7 @@ flowchart LR
   S[static: lint + typecheck] --> SM[smoke: API + Chromium]
   UB[unit-backend: go test] --> SM
   UF[unit-frontend: Vitest] --> SM
-  KD[known-defects: go test -tags defects]:::nb
-  classDef nb stroke-dasharray: 4 4
+  KD[known-defects: go test -tags defects, se esperan fallos]
 ```
 
 | Job | Qué hace | Bloquea |
@@ -112,7 +111,7 @@ flowchart LR
 | `static` | ESLint con `eslint-plugin-playwright` y TypeScript estricto | Sí |
 | `unit-backend` | `go test -cover ./...` con la cobertura en el resumen del job | Sí |
 | `unit-frontend` | `pnpm typecheck`, `pnpm lint` y `pnpm test`; los `*.defects.test.*` usan `it.fails` y siguen en verde | Sí |
-| `known-defects` | `go test -tags defects`; lista en el resumen los BUG que siguen abiertos | No (`continue-on-error`) |
+| `known-defects` | `go test -tags defects`: queda en verde mientras los 6 tests `TestBUG*` sigan fallando (los defectos siguen abiertos) y se pone en rojo si uno empieza a pasar, porque ese defecto ya se corrigió y su test debe pasar a regresión. Es el mismo contrato que `test.fail()`. El resumen del job lista cada test | Sí, solo si un defecto se corrige sin promover su test |
 | `smoke` | Levanta la app con Docker y corre `@smoke` en API y Chromium. Solo arranca si pasaron los tres anteriores | Sí |
 
 ### Continuous Testing (`.github/workflows/continuous-testing.yml`)

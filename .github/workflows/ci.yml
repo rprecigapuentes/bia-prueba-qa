@@ -72,10 +72,11 @@ jobs:
       - run: pnpm test
 
   known-defects:
-    name: Known defects · go test -tags defects (non-blocking)
+    # Same contract as test.fail() in Playwright: green while every documented defect still
+    # reproduces, red as soon as one stops failing, so its test gets promoted to a regression test.
+    name: Known defects · go test -tags defects (expected to fail)
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    continue-on-error: true
     defaults:
       run:
         working-directory: backend
@@ -85,13 +86,22 @@ jobs:
         with:
           go-version-file: backend/go.mod
           cache-dependency-path: backend/go.sum
-      - name: Defect tests (expected to fail until fixed)
+      - name: Every defect test must still fail
         run: |
-          set +e
-          go test -tags defects -run BUG ./internal/meter ./internal/httpx ./internal/analysis/classify > defects.txt 2>&1
-          status=$?
-          { echo '### Known defects (unit)'; echo '```'; grep -E '^(--- FAIL|    .*BUG-)' defects.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-          exit $status
+          go test -tags defects -run BUG -json ./internal/meter ./internal/httpx ./internal/analysis/classify > defects.json || true
+          jq -r 'select(.Test != null and (.Test | startswith("TestBUG")) and (.Action == "pass" or .Action == "fail")) | "\(.Action) \(.Test)"' defects.json | sort -u > results.txt
+          {
+            echo '### Known defects (unit)'
+            echo '| Test | Resultado |'
+            echo '|---|---|'
+            awk '{ printf "| `%s` | %s |\n", $2, ($1 == "fail" ? "sigue abierto (esperado)" : "**ya pasa: corregido, convertir en regresión**") }' results.txt
+          } >> "$GITHUB_STEP_SUMMARY"
+          test -s results.txt || { echo "::error::No se ejecutó ningún test de defecto"; exit 1; }
+          if grep -q '^pass ' results.txt; then
+            grep '^pass ' results.txt | while read -r _ name; do echo "::error::$name ya pasa: el defecto parece corregido; quita la tag defects y conviértelo en regresión"; done
+            exit 1
+          fi
+          echo "Todos los defectos documentados siguen reproduciéndose: $(wc -l < results.txt) tests fallan como se espera."
 
   smoke:
     name: Smoke · API + Chromium
