@@ -50,3 +50,10 @@ Continuous Testing SHALL unir los reportes de todos los jobs en un solo reporte 
 #### Scenario: Revisión de una ejecución nocturna
 - **WHEN** alguien abre una ejecución de Continuous Testing
 - **THEN** ve los conteos en el resumen y descarga un único reporte HTML con todos los proyectos
+
+### Requirement: Reporte Allure
+Cada ejecución de la suite SHALL producir resultados de Allure, y Continuous Testing MUST publicar un reporte Allure consolidado de todos los shards como artefacto, en un solo archivo HTML que se abra sin servidor.
+
+#### Scenario: Revisión con Allure
+- **WHEN** alguien descarga el artefacto `allure-report` de una ejecución de Continuous Testing
+- **THEN** abre `index.html` directamente y ve todos los tests de API, Chromium y Firefox con sus etiquetas y el entorno de la ejecución

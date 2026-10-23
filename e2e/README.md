@@ -24,6 +24,15 @@ npm test
 
 El reporte HTML queda en `playwright-report/`. Se abre con `npm run report`. Traza, captura y video se guardan solo de los tests que fallan.
 
+Cada ejecución genera también resultados de **Allure** en `allure-results/`:
+
+```bash
+npm run report:allure        # genera allure-report/index.html, un solo archivo que se abre con doble clic
+npm run report:allure:open   # lo sirve en el navegador
+```
+
+El reporte de Allure agrupa por suite y por etiqueta (`@smoke`, `@regression`, `@defect`), muestra pasos, adjuntos (trazas, capturas, videos en fallo) y el entorno (app, commit, zona horaria).
+
 | Script | Qué corre |
 |---|---|
 | `npm test` | Todo: proyectos `setup`, `chromium`, `firefox` y `api` |
@@ -129,7 +138,9 @@ flowchart LR
 
 - **Paralelo:** una matriz de 5 jobs: API, y Chromium y Firefox partidos en 2 shards cada uno con `--shard`. Usa `fail-fast: false`, así que un shard roto no cancela los demás.
 - **Aislado:** cada job corre en su propio runner con su propia app levantada con `docker compose`. No hay estado compartido entre jobs, y dentro de cada job los tests corren con `fullyParallel`.
-- **Un solo reporte:** cada shard sube un *blob report*. El job `report` los une con `npx playwright merge-reports` en un HTML (artefacto `continuous-testing-report`) y escribe en el resumen del run el conteo de esperados, inesperados, flaky y omitidos.
+- **Reportes consolidados:** cada shard sube su *blob report* y sus resultados de Allure. El job `report` une todo y publica dos artefactos: `continuous-testing-report` (Playwright HTML, con `merge-reports`) y `allure-report` (Allure en un solo `index.html`). En el resumen del run deja los conteos de esperados, inesperados, flaky y omitidos.
+
+**Dónde ver los reportes:** en GitHub, Actions → *continuous-testing* → el run → sección **Artifacts** al final de la página. Se descarga el zip, se descomprime y se abre `index.html`. No se publican en GitHub Pages porque el repo es privado y Pages en repos privados requiere un plan de pago.
 
 Para lanzarlo a mano:
 

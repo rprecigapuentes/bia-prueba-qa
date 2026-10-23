@@ -7,7 +7,17 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: [['list'], ['html', { open: 'never' }]],
+  reporter: [
+    ['list'],
+    ['html', { open: 'never' }],
+    [
+      'allure-playwright',
+      {
+        resultsDir: 'allure-results',
+        environmentInfo: { app: 'EnergIA', commit: process.env.GITHUB_SHA ?? 'local', timezone: 'America/Bogota' },
+      },
+    ],
+  ],
   use: {
     baseURL: env.baseUrl,
     trace: 'retain-on-failure',
