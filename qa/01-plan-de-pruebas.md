@@ -115,4 +115,47 @@ Técnicas, en el orden de aplicación: exploratorio, funcional, dominio y combin
 
 ## Resumen ejecutivo
 
-Se completa al cierre de la prueba: si el build se libera a producción, por qué y qué riesgos quedan abiertos.
+**Decisión: no se libera el build `026b991` a producción.** El motor detecta, clasifica y prioriza bien las cuatro anomalías del dataset: tipos, severidades, confianzas y orden coinciden con la documentación (TC-14, TC-15, TC-19). La capa que traduce ese resultado al operador, en cambio, le da información incorrecta en tres puntos que tocan las decisiones que el producto promete apoyar.
+
+**Bloqueantes** (severidad o prioridad alta; cada uno se corrige en una o dos líneas):
+
+| Defecto | Qué ve el operador | Riesgo |
+|---|---|---|
+| [BUG-01](05-defectos.md#bug-01) | El falso positivo M-106 aparece en Alerta; la planta muestra 8 / 2 / 2 en vez de 9 / 1 / 2 | R1: escala lo que el motor dice "no escalar" |
+| [BUG-02](05-defectos.md#bug-02) | Todas las horas de planta corridas 5 h en Colombia; la detección de M-109 se ve a las 09:00 en vez de las 14:00 | R2: investiga en sitio la ventana equivocada |
+| [BUG-03](05-defectos.md#bug-03) | El libro no pasa de la página 1; M-111 y M-112 (crítico) no aparecen sin filtrar | R3: un medidor crítico queda fuera de la vista principal |
+
+**Para la siguiente iteración:**
+
+- **Prioridad media:**
+  - BUG-04: la búsqueda distingue mayúsculas.
+  - BUG-08: los conteos de órdenes no coinciden en Despacho.
+- **Prioridad baja:**
+  - BUG-05: `page` negativa responde 500.
+  - BUG-06: `size: 0` se acepta.
+  - BUG-09: textos en inglés.
+  - BUG-10: límites de severidad con `>=`.
+
+**Cobertura alcanzada:**
+
+- 10 casos de humo (10 / 10).
+- 25 casos de caja negra (13 PASA, 12 FALLA).
+- 30 combinaciones pairwise de `getAll`.
+- 4 módulos revisados por caja blanca.
+- 94 tests de Playwright en Chromium, Firefox y API con `America/Bogota`, más 6 tests unitarios de defectos, todos en CI.
+
+Los riesgos R1–R4 quedaron cubiertos en al menos dos capas.
+
+**Riesgos que siguen abiertos:**
+
+- **La suite existente no protege la capa de presentación.** Cuatro funciones con 100 % de cobertura de líneas tienen defectos, `server_test.go:131` fija el conteo incorrecto y `vite.config.ts` fuerza `TZ=UTC`, lo que oculta BUG-02. Hasta corregirlo, un arreglo puede romperse sin que nadie lo note.
+- **La redacción con OpenAI no se probó:** no hay API key en el entorno. Su barrera anti-cifras ignora `.` y `,` (`ai/narrator.go:34-36`).
+- **Límites del motor sin datos reales:** 20 %, 50 % y 12 h solo se prueban con tests unitarios.
+- **Rendimiento, carga, seguridad más allá de la autenticación, y móvil:** fuera de alcance.
+
+**Condición para liberar:**
+
+1. Corregir BUG-01, BUG-02 y BUG-03.
+2. Convertir sus tests de defecto en tests de regresión (quitar `test.fail()`, `it.fails` y la tag `defects`).
+3. Actualizar `server_test.go:131` a 9 / 1 / 2.
+4. Volver a correr el humo y la suite completa en CI.
