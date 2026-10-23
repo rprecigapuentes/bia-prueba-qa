@@ -121,7 +121,7 @@ Oráculo de cada combinación, calculado desde la documentación y no desde la r
 | [TC-05](#tc-05) | Verifica que buscar 109 devuelve solo M-109 | Partición de equivalencia | R3 | API | PASA | — |
 | [TC-06](#tc-06) | Verifica que buscar m-109 en minúsculas devuelve M-109 en la API y en el libro | Partición de equivalencia | R3 | API + UI | FALLA | BUG-04 |
 | [TC-07](#tc-07) | Verifica que un medidor inexistente da lista vacía en la búsqueda y 404 en el detalle | Partición de equivalencia | R3 | API + UI | PASA | — |
-| [TC-08](#tc-08) | Verifica que un estado fuera del dominio responde 400 con el mensaje documentado | Partición de equivalencia (negativa) | R6 | API | FALLA | BUG-07 |
+| [TC-08](#tc-08) | Verifica que un estado fuera del dominio responde 400 con el mensaje documentado | Partición de equivalencia (negativa) | R6 | API | FALLA | BUG-07 (retirado) |
 | [TC-09](#tc-09) | Verifica que filtrar por ALERT devuelve solo M-104 | Tabla de decisión (D2, D5) | R1 | API + UI | FALLA | BUG-01 |
 | [TC-10](#tc-10) | Verifica que size fuera de 1–100 responde 400 y en los límites devuelve 1 y 12 filas | Valores límite | R3 | API | FALLA | BUG-06 |
 | [TC-11](#tc-11) | Verifica que page por debajo de 1 responde 400 y la última página trae los 2 medidores restantes | Valores límite | R3 | API | FALLA | BUG-05 |
@@ -249,7 +249,7 @@ Oráculo de cada combinación, calculado desde la documentación y no desde la r
 - **Datos:** status critical; status FOO; sort_by nombre
 - **Resultado esperado:** 400, message "Filtros inválidos", errors con "filter.status debe ser NORMAL, ALERT o CRITICAL" (o el equivalente para sort_by)
 - **Resultado obtenido:** status 'FOO': 400 'Filtros inválidos' con 'filter.status debe ser NORMAL, ALERT o CRITICAL' (correcto). sort_by 'nombre': 400 con 'filter.sort_by debe ser meter_id, consumption, variation o severity' (correcto). status 'critical' (minúsculas): 200 con count 2 (M-109 y M-112) en lugar de 400. Evidencia: TC-08/api.txt.
-- **Estado:** FALLA · **Defecto:** BUG-07
+- **Estado:** FALLA · **Defecto:** BUG-07, retirado después de la caja blanca: la conversión a mayúsculas es intencional (`meter/dto.go:49`, `meter/service_test.go:61`). Queda como observación de contrato; ver [`05-defectos.md`](05-defectos.md).
 - **Evidencia:** [evidencias/TC-08/](evidencias/TC-08/)
 
 ### TC-09
@@ -516,7 +516,7 @@ Candidatos a defecto. La severidad y la prioridad aquí son preliminares; las fi
 | BUG-04 | La búsqueda por `meter_id` distingue mayúsculas (`m-109` → 0 resultados) | TC-06, TC-16 | Media |
 | BUG-05 | `page: -1` responde 500 "Error interno del servidor" en vez de 400 | TC-11 | Media |
 | BUG-06 | `size: 0` se acepta y se trata como 10 en vez de responder 400 | TC-10 | Baja |
-| BUG-07 | `status` en minúsculas (`critical`) se acepta aunque el contrato lo define en mayúsculas | TC-08 | Baja |
+| BUG-07 | `status` en minúsculas (`critical`) se acepta aunque el contrato lo define en mayúsculas | TC-08 | Retirado en caja blanca: es tolerancia intencional |
 | BUG-08 | Despacho dice "3 órdenes abiertas" y numera "Orden 1 de 4" | TC-18 | Baja |
 | BUG-09 | Textos en inglés y códigos crudos (`OPERATIONAL_CHANGE`) visibles en una interfaz en español | TC-25 | Baja |
 

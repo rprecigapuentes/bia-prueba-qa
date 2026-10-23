@@ -103,7 +103,8 @@ Cada sesión dura 10–12 minutos. Anota: qué probaste, qué viste, qué te sor
 | 12:00–14:00 | Playwright | Estructura (POM, fixtures, `storageState`), ejecución multi-navegador con zona horaria, `test.fail()`, reporte HTML, CI |
 | 14:00–15:00 | Resumen ejecutivo | ¿Se libera? No, y por qué; riesgos abiertos |
 
-## Decisiones pendientes
+## Decisiones tomadas
 
-- **Repo de entrega**: un fork en GitHub no puede ser privado, así que se crea un repo privado nuevo (por ejemplo `rprecigapuentes/bia-prueba-qa`), se empuja este repo y se da acceso al evaluador. Falta el usuario de GitHub del evaluador o usar un enlace con invitación.
-- **Issues de defectos**: se crean en ese repo privado una vez exista.
+- **Repo de entrega:** repo propio `rprecigapuentes/bia-prueba-qa`, privado durante el trabajo y público al entregar.
+- **Issues de defectos:** uno por defecto en ese repo (#13–#21).
+- **Trabajo por PR:** cada change de OpenSpec pasó por propuesta e implementación revisadas (ver `CONVENTIONS.md`).
