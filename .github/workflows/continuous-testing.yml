@@ -78,7 +78,7 @@ jobs:
           esac
 
       - name: Run ${{ matrix.project }} shard ${{ matrix.shard }}
-        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shard }} ${{ steps.suite.outputs.grep }} --reporter=blob
+        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shard }} ${{ steps.suite.outputs.grep }} --reporter=blob,allure-playwright
 
       - name: Upload the blob report
         if: always()
@@ -86,6 +86,14 @@ jobs:
         with:
           name: blob-${{ matrix.project }}-${{ strategy.job-index }}
           path: e2e/blob-report
+          retention-days: 7
+
+      - name: Upload the Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-${{ matrix.project }}-${{ strategy.job-index }}
+          path: e2e/allure-results
           retention-days: 7
 
   report:
@@ -127,6 +135,8 @@ jobs:
               `| ${r.expected} | ${r.unexpected} | ${r.flaky} | ${r.skipped} | ${(r.duration / 1000).toFixed(1)} s |`,
               "",
               "Los tests `@defect` cuentan como esperados mientras el defecto siga abierto.",
+              "",
+              "Reportes en **Artifacts** (abajo): `continuous-testing-report` (Playwright HTML) y `allure-report` (Allure, un solo `index.html`).",
             ];
             require("fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join("\n") + "\n");
           '
@@ -136,4 +146,20 @@ jobs:
         with:
           name: continuous-testing-report
           path: e2e/playwright-report
+          retention-days: 14
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: e2e/allure-results
+          pattern: allure-*
+          merge-multiple: true
+
+      - name: Build the Allure report (single HTML file)
+        run: npm run report:allure
+
+      - name: Upload the Allure report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: e2e/allure-report
           retention-days: 14
