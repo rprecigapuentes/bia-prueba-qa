@@ -68,7 +68,7 @@ Los reportes de Playwright HTML y Allure quedan en **Actions → run → Artifac
 
 ## Cómo se trabajó y uso de IA
 
-- **Spec-Driven Development con OpenSpec.** Cada entregable fue un *change* revisado en dos PR: primero la propuesta (requisitos y tareas) y después la implementación. Quedaron 9 changes archivados en [`openspec/changes/archive/`](openspec/changes/archive/), sus specs en [`openspec/specs/`](openspec/specs/), y 15 PR en el historial.
+- **Spec-Driven Development con OpenSpec.** Cada entregable fue un *change* revisado en dos PR: primero la propuesta (requisitos y tareas) y después la implementación. Quedaron 9 changes archivados en [`openspec/changes/archive/`](openspec/changes/archive/), sus specs en [`openspec/specs/`](openspec/specs/), y 16 PR en el historial.
 - **Claude Code** redactó, ejecutó pruebas de API, tomó capturas y escribió código. Los **agentes de Playwright** (planner, generator, healer) trabajaron sobre el MCP.
 - **Decisiones humanas:**
   - el alcance, los riesgos, y la severidad y prioridad de cada defecto;
